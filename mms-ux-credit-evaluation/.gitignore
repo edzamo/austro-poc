@@ -1,0 +1,35 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+tmp/
+out-tsc/
+
+# Angular cache
+.angular/
+
+# Testing
+coverage/
+
+# Environment (never commit secrets)
+.env
+.env.*
+!.env.example
+
+# IDE & editors
+.vscode/
+.idea/
+*.iml
+*.iws
+*.ipr
+.editorconfig
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Local tooling
+.claude/
+.npmrc
+

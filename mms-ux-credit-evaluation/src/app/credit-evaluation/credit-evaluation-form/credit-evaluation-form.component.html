@@ -1,0 +1,164 @@
+<div class="page-layout">
+
+  <!-- ─── Formulario de Evaluación ────────────────────────────────────── -->
+  <section class="card">
+    <div class="card__header">
+      <h1 class="card__title">Nueva Evaluación de Crédito</h1>
+      <p class="card__subtitle">Complete los datos del solicitante para evaluar la solicitud.</p>
+    </div>
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate class="eval-form">
+
+      <!-- Cédula -->
+      <div class="form-group" [class.form-group--error]="fieldInvalid('cedula')">
+        <label class="form-label" for="cedula">
+          Número de Cédula
+          <span class="form-label__required">*</span>
+        </label>
+        <input
+          id="cedula"
+          type="text"
+          class="form-control"
+          formControlName="cedula"
+          placeholder="Ej: 1713175071"
+          maxlength="10"
+          autocomplete="off"
+        />
+        @if (fieldInvalid('cedula')) {
+          <span class="form-error">
+            @if (form.get('cedula')?.hasError('required')) { La cédula es obligatoria. }
+            @else if (form.get('cedula')?.hasError('pattern')) { Debe contener exactamente 10 dígitos. }
+          </span>
+        }
+      </div>
+
+      <!-- Grilla de 3 campos numéricos -->
+      <div class="form-grid">
+
+        <!-- Monto Solicitado -->
+        <div class="form-group" [class.form-group--error]="fieldInvalid('requestedAmount')">
+          <label class="form-label" for="requestedAmount">
+            Monto Solicitado ($)
+            <span class="form-label__required">*</span>
+          </label>
+          <input
+            id="requestedAmount"
+            type="number"
+            class="form-control"
+            formControlName="requestedAmount"
+            placeholder="Ej: 15000"
+            min="1"
+          />
+          @if (fieldInvalid('requestedAmount')) {
+            <span class="form-error">
+              @if (form.get('requestedAmount')?.hasError('required')) { El monto es obligatorio. }
+              @else if (form.get('requestedAmount')?.hasError('min')) { Debe ser un valor positivo. }
+            </span>
+          }
+        </div>
+
+        <!-- Plazo en Años -->
+        <div class="form-group" [class.form-group--error]="fieldInvalid('years')">
+          <label class="form-label" for="years">
+            Plazo (años)
+            <span class="form-label__required">*</span>
+          </label>
+          <input
+            id="years"
+            type="number"
+            class="form-control"
+            formControlName="years"
+            placeholder="Ej: 5"
+            min="1"
+            max="30"
+          />
+          @if (fieldInvalid('years')) {
+            <span class="form-error">
+              @if (form.get('years')?.hasError('required')) { El plazo es obligatorio. }
+              @else if (form.get('years')?.hasError('min')) { Debe ser al menos 1 año. }
+              @else if (form.get('years')?.hasError('max')) { Máximo 30 años. }
+            </span>
+          }
+        </div>
+
+        <!-- Salario Mensual -->
+        <div class="form-group" [class.form-group--error]="fieldInvalid('salary')">
+          <label class="form-label" for="salary">
+            Salario Mensual ($)
+            <span class="form-label__required">*</span>
+          </label>
+          <input
+            id="salary"
+            type="number"
+            class="form-control"
+            formControlName="salary"
+            placeholder="Ej: 2000"
+            min="1"
+          />
+          @if (fieldInvalid('salary')) {
+            <span class="form-error">
+              @if (form.get('salary')?.hasError('required')) { El salario es obligatorio. }
+              @else if (form.get('salary')?.hasError('min')) { Debe ser un valor positivo. }
+            </span>
+          }
+        </div>
+
+      </div><!-- /form-grid -->
+
+      <div class="form-actions">
+        <button
+          type="submit"
+          class="btn btn--primary"
+          [disabled]="isLoading"
+        >
+          @if (isLoading) {
+            <span class="spinner" aria-hidden="true"></span>
+            Evaluando...
+          } @else {
+            Evaluar Crédito
+          }
+        </button>
+      </div>
+
+    </form>
+
+    <!-- ─── Panel de Resultado ──────────────────────────────────────────── -->
+    @if (state() === 'success' && lastResult()) {
+      <div class="result-panel" [class.result-panel--approved]="isApproved" [class.result-panel--rejected]="isRejected" role="alert">
+        <div class="result-panel__icon">
+          @if (isApproved) { ✅ } @else { ❌ }
+        </div>
+        <div class="result-panel__body">
+          <p class="result-panel__status">
+            Solicitud
+            <strong [class.text-success]="isApproved" [class.text-danger]="isRejected">
+              {{ lastResult()!.finalStatus }}
+            </strong>
+          </p>
+          <p class="result-panel__detail">
+            Evaluación #{{ lastResult()!.id }} — Cédula {{ lastResult()!.cedula }}
+          </p>
+        </div>
+      </div>
+    }
+
+    @if (state() === 'error') {
+      <div class="alert alert--error" role="alert">
+        <strong>⚠️ Error:</strong> {{ errorMessage() }}
+      </div>
+    }
+
+  </section>
+
+  <!-- ─── Historial de Evaluaciones ───────────────────────────────────── -->
+  <section class="card">
+    <div class="card__header">
+      <h2 class="card__title">Historial de Evaluaciones</h2>
+    </div>
+    <app-evaluation-list
+      [evaluations]="evaluations()"
+      [loading]="loadingHistory()"
+    />
+  </section>
+
+</div>

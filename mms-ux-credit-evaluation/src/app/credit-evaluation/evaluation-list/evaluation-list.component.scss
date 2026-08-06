@@ -1,0 +1,145 @@
+/* ─── Estados de la lista ─────────────────────────────────────────────── */
+.list-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 48px 24px;
+  text-align: center;
+  color: var(--color-gray-600);
+  font-size: 0.9375rem;
+
+  &--loading {
+    flex-direction: row;
+    gap: 10px;
+    padding: 32px;
+  }
+
+  &--empty {
+    gap: 6px;
+  }
+}
+
+.list-state__icon {
+  font-size: 2rem;
+  margin-bottom: 4px;
+}
+
+.list-state__hint {
+  font-size: 0.8125rem;
+  color: var(--color-gray-400);
+}
+
+/* ─── Spinner variante oscura ─────────────────────────────────────────── */
+.spinner--dark {
+  border-color: rgba(0, 0, 0, 0.15);
+  border-top-color: var(--color-primary);
+}
+
+/* ─── Tabla ───────────────────────────────────────────────────────────── */
+.table-wrapper {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.eval-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+
+  thead {
+    background: var(--color-gray-50);
+  }
+
+  th {
+    padding: 10px 16px;
+    text-align: left;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-gray-600);
+    border-bottom: 1px solid var(--color-gray-200);
+    white-space: nowrap;
+  }
+
+  td {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--color-gray-100);
+    color: var(--color-gray-800);
+    vertical-align: middle;
+  }
+
+  tbody tr {
+    transition: background-color 0.1s;
+
+    &:hover {
+      background-color: var(--color-gray-50);
+    }
+
+    &:last-child td {
+      border-bottom: none;
+    }
+  }
+}
+
+/* ─── Columnas especiales ─────────────────────────────────────────────── */
+.col-id {
+  color: var(--color-gray-400);
+  font-size: 0.8125rem;
+  width: 40px;
+}
+
+.col-cedula {
+  font-family: monospace;
+  font-size: 0.9rem;
+  letter-spacing: 0.02em;
+}
+
+.col-amount, .col-salary {
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+.col-years {
+  color: var(--color-gray-600);
+}
+
+.col-date {
+  color: var(--color-gray-600);
+  white-space: nowrap;
+  font-size: 0.8125rem;
+}
+
+/* ─── Badge de estado ─────────────────────────────────────────────────── */
+.badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+
+  &--approved {
+    background-color: var(--color-success-bg);
+    color: var(--color-success);
+    border: 1px solid var(--color-success-border);
+  }
+
+  &--rejected {
+    background-color: var(--color-danger-bg);
+    color: var(--color-danger);
+    border: 1px solid var(--color-danger-border);
+  }
+}
+
+/* ─── Resumen ──────────────────────────────────────────────────────────── */
+.list-summary {
+  padding: 12px 16px;
+  font-size: 0.8125rem;
+  color: var(--color-gray-400);
+  text-align: right;
+  border-top: 1px solid var(--color-gray-100);
+}

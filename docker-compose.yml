@@ -1,0 +1,102 @@
+version: '3.9'
+
+# ─── Red interna del ecosistema ───────────────────────────────────────────────
+networks:
+  credit-network:
+    driver: bridge
+
+# ─── Volúmenes persistentes ───────────────────────────────────────────────────
+volumes:
+  postgres-data:
+
+services:
+
+  # ──────────────────────────────────────────────────────────────────────────
+  # PostgreSQL 16 — Base de datos del orquestador
+  # ──────────────────────────────────────────────────────────────────────────
+  postgres:
+    image: postgres:16-alpine
+    container_name: credit-postgres
+    environment:
+      POSTGRES_DB: credit_evaluation_db
+      POSTGRES_USER: austro_user
+      POSTGRES_PASSWORD: austro_pass
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - credit-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U austro_user -d credit_evaluation_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ──────────────────────────────────────────────────────────────────────────
+  # ms-risk-mock-credit-evaluation (puerto 8081)
+  # ──────────────────────────────────────────────────────────────────────────
+  ms-risk-mock:
+    build:
+      context: ./ms-risk-mock-credit-evaluation
+      dockerfile: src/main/docker/Dockerfile.jvm
+    container_name: ms-risk-mock
+    image: austro/ms-risk-mock-credit-evaluation:1.0.0
+    ports:
+      - "8081:8081"
+    environment:
+      QUARKUS_HTTP_PORT: 8081
+    networks:
+      - credit-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8081/q/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+
+  # ──────────────────────────────────────────────────────────────────────────
+  # ms-orchestrator-credit-evaluation (puerto 8080)
+  # ──────────────────────────────────────────────────────────────────────────
+  ms-orchestrator:
+    build:
+      context: ./ms-orchestrator-credit-evaluation
+      dockerfile: src/main/docker/Dockerfile.jvm
+    container_name: ms-orchestrator
+    image: austro/ms-orchestrator-credit-evaluation:1.0.0
+    ports:
+      - "8080:8080"
+    environment:
+      QUARKUS_HTTP_PORT: 8080
+      DB_URL: jdbc:postgresql://postgres:5432/credit_evaluation_db
+      DB_USERNAME: austro_user
+      DB_PASSWORD: austro_pass
+      RISK_SERVICE_URL: http://ms-risk-mock:8081
+    networks:
+      - credit-network
+    depends_on:
+      postgres:
+        condition: service_healthy
+      ms-risk-mock:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/q/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+
+  # ──────────────────────────────────────────────────────────────────────────
+  # mms-ux-credit-evaluation (puerto 4200) — Nginx sirviendo Angular
+  # ──────────────────────────────────────────────────────────────────────────
+  mms-ux:
+    build:
+      context: ./mms-ux-credit-evaluation
+      dockerfile: Dockerfile
+    container_name: mms-ux
+    image: austro/mms-ux-credit-evaluation:1.0.0
+    ports:
+      - "4200:80"
+    networks:
+      - credit-network
+    depends_on:
+      ms-orchestrator:
+        condition: service_healthy

@@ -1,0 +1,53 @@
+@if (loading) {
+  <div class="list-state list-state--loading" aria-busy="true">
+    <span class="spinner spinner--dark" aria-hidden="true"></span>
+    Cargando historial...
+  </div>
+}
+
+@else if (evaluations.length === 0) {
+  <div class="list-state list-state--empty">
+    <span class="list-state__icon">📋</span>
+    <p>No hay evaluaciones registradas aún.</p>
+    <p class="list-state__hint">Las evaluaciones aparecerán aquí después de procesarlas.</p>
+  </div>
+}
+
+@else {
+  <div class="table-wrapper">
+    <table class="eval-table" aria-label="Historial de evaluaciones de crédito">
+      <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Cédula</th>
+          <th scope="col">Monto Solicitado</th>
+          <th scope="col">Plazo</th>
+          <th scope="col">Salario</th>
+          <th scope="col">Fecha</th>
+          <th scope="col">Resultado</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (evaluation of evaluations; track evaluation.id) {
+          <tr>
+            <td class="col-id">{{ evaluation.id }}</td>
+            <td class="col-cedula">{{ evaluation.cedula }}</td>
+            <td class="col-amount">{{ evaluation.requestedAmount | currency:'USD':'symbol':'1.2-2' }}</td>
+            <td class="col-years">{{ evaluation.years }} año{{ evaluation.years === 1 ? '' : 's' }}</td>
+            <td class="col-salary">{{ evaluation.salary | currency:'USD':'symbol':'1.2-2' }}</td>
+            <td class="col-date">{{ evaluation.evaluationDate | date:'dd/MM/yyyy HH:mm' }}</td>
+            <td class="col-status">
+              <span class="badge" [class.badge--approved]="evaluation.finalStatus === 'APROBADO'" [class.badge--rejected]="evaluation.finalStatus === 'RECHAZADO'">
+                {{ evaluation.finalStatus }}
+              </span>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <p class="list-summary">
+    {{ evaluations.length }} evaluación{{ evaluations.length === 1 ? '' : 'es' }} registrada{{ evaluations.length === 1 ? '' : 's' }}.
+  </p>
+}

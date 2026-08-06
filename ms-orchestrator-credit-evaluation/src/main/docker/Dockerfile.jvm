@@ -1,0 +1,28 @@
+# ─── Etapa 1: Compilación con Maven ──────────────────────────────────────────
+FROM maven:3.9-eclipse-temurin-21-alpine AS builder
+WORKDIR /build
+
+# Descarga dependencias primero — esta capa se cachea si pom.xml no cambia
+COPY pom.xml .
+RUN mvn dependency:go-offline -q
+
+# Compila el proyecto
+COPY src/ ./src/
+RUN mvn package -DskipTests -q
+
+# ─── Etapa 2: Runtime mínimo ──────────────────────────────────────────────────
+FROM eclipse-temurin:21-jre-alpine
+WORKDIR /deployments
+
+RUN addgroup --system appgroup && adduser --system --ingroup appgroup appuser
+
+COPY --chown=appuser:appgroup --from=builder /build/target/quarkus-app/lib/     ./lib/
+COPY --chown=appuser:appgroup --from=builder /build/target/quarkus-app/*.jar    ./
+COPY --chown=appuser:appgroup --from=builder /build/target/quarkus-app/app/     ./app/
+COPY --chown=appuser:appgroup --from=builder /build/target/quarkus-app/quarkus/ ./quarkus/
+
+USER appuser
+EXPOSE 8080
+ENV JAVA_OPTS_APPEND="-Dquarkus.http.host=0.0.0.0 -Djava.util.logging.manager=org.jboss.logmanager.LogManager"
+
+ENTRYPOINT ["java", "-jar", "/deployments/quarkus-run.jar"]
