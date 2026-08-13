@@ -23,7 +23,7 @@ public class GlobalExceptionMapper implements ExceptionMapper<Exception> {
 
         if (exception instanceof CedulaInvalidaException ex) {
             log.warn("Cédula inválida rechazada: {}", ex.getMessage());
-            return build(422, "Cédula Inválida", ex.getMessage());
+            return build(400, "Cédula Inválida", ex.getMessage());
         }
 
         if (exception instanceof EvaluacionNoEncontradaException ex) {
@@ -41,7 +41,7 @@ public class GlobalExceptionMapper implements ExceptionMapper<Exception> {
                     .map(v -> v.getPropertyPath() + ": " + v.getMessage())
                     .collect(Collectors.joining("; "));
             log.warn("Validación fallida: {}", detail);
-            return build(422, "Error de Validación", detail);
+            return build(400, "Error de Validación", detail);
         }
 
         if (exception instanceof WebApplicationException ex) {

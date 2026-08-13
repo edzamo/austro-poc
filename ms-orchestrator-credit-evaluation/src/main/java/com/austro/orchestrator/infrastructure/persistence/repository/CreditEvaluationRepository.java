@@ -14,7 +14,7 @@ import java.util.List;
  * Convierte entre el record de dominio (CreditEvaluation) y la entidad JPA.
  */
 @ApplicationScoped
-public class CreditEvaluationPortImpl
+public class CreditEvaluationRepository
         implements CreditEvaluationPort, PanacheRepository<CreditEvaluationEntity> {
 
     @Override
