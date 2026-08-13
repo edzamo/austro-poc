@@ -17,6 +17,7 @@ import java.util.List;
 public class CreditEvaluationRepository
         implements CreditEvaluationPort, PanacheRepository<CreditEvaluationEntity> {
 
+
     @Override
     public CreditEvaluation save(CreditEvaluation evaluation) {
         CreditEvaluationEntity entity = toEntity(evaluation);
