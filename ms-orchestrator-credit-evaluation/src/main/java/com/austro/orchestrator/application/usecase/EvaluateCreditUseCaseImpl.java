@@ -1,8 +1,8 @@
 package com.austro.orchestrator.application.usecase;
 
 import com.austro.orchestrator.application.port.in.EvaluateCreditUseCase;
-import com.austro.orchestrator.application.port.out.CreditEvaluationRepository;
-import com.austro.orchestrator.application.port.out.RiskServicePort;
+import com.austro.orchestrator.application.port.out.CreditEvaluationPort;
+import com.austro.orchestrator.application.port.out.RiskPort;
 import com.austro.orchestrator.application.service.CedulaValidatorService;
 import com.austro.orchestrator.application.service.CreditApprovalService;
 import com.austro.orchestrator.domain.model.CreditEvaluation;
@@ -22,8 +22,8 @@ import java.math.BigDecimal;
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class EvaluateCreditUseCaseImpl implements EvaluateCreditUseCase {
 
-    private final CreditEvaluationRepository repository;
-    private final RiskServicePort riskServicePort;
+    private final CreditEvaluationPort repository;
+    private final RiskPort riskPort;
     private final CedulaValidatorService cedulaValidator;
     private final CreditApprovalService approvalService;
 
@@ -38,7 +38,7 @@ public class EvaluateCreditUseCaseImpl implements EvaluateCreditUseCase {
         }
 
         log.info("Consultando datos de riesgo para: {}", cedula);
-        RiskData riskData = riskServicePort.getRiskData(cedula);
+        RiskData riskData = riskPort.getRiskData(cedula);
         log.info("Score de riesgo obtenido: {}, Deudas: {}", riskData.score(), riskData.debts().size());
 
         EvaluationStatus status = approvalService.evaluate(requestedAmount, years, salary, riskData);

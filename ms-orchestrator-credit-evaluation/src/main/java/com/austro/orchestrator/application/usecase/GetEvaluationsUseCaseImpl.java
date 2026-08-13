@@ -1,7 +1,7 @@
 package com.austro.orchestrator.application.usecase;
 
 import com.austro.orchestrator.application.port.in.GetEvaluationsUseCase;
-import com.austro.orchestrator.application.port.out.CreditEvaluationRepository;
+import com.austro.orchestrator.application.port.out.CreditEvaluationPort;
 import com.austro.orchestrator.domain.model.CreditEvaluation;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -13,7 +13,7 @@ import java.util.List;
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class GetEvaluationsUseCaseImpl implements GetEvaluationsUseCase {
 
-    private final CreditEvaluationRepository repository;
+    private final CreditEvaluationPort repository;
 
     @Override
     public List<CreditEvaluation> findAll() {

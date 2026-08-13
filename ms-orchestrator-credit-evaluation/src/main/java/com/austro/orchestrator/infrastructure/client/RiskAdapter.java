@@ -1,7 +1,7 @@
 package com.austro.orchestrator.infrastructure.client;
 
 import com.austro.orchestrator.application.exception.RiskServiceUnavailableException;
-import com.austro.orchestrator.application.port.out.RiskServicePort;
+import com.austro.orchestrator.application.port.out.RiskPort;
 import com.austro.orchestrator.domain.model.RiskData;
 import com.austro.orchestrator.infrastructure.client.dto.CustomerDebtsResponse;
 import com.austro.orchestrator.infrastructure.client.dto.RiskScoreResponse;
@@ -18,7 +18,7 @@ import java.util.List;
  */
 @Slf4j
 @ApplicationScoped
-public class RiskServiceAdapter implements RiskServicePort {
+public class RiskAdapter implements RiskPort {
 
     @RestClient
     RiskServiceClient riskServiceClient;
