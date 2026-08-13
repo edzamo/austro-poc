@@ -1,6 +1,6 @@
 package com.austro.orchestrator.infrastructure.persistence.repository;
 
-import com.austro.orchestrator.application.port.out.CreditEvaluationRepository;
+import com.austro.orchestrator.application.port.out.CreditEvaluationPort;
 import com.austro.orchestrator.domain.model.CreditEvaluation;
 import com.austro.orchestrator.domain.model.EvaluationStatus;
 import com.austro.orchestrator.infrastructure.persistence.entity.CreditEvaluationEntity;
@@ -14,8 +14,8 @@ import java.util.List;
  * Convierte entre el record de dominio (CreditEvaluation) y la entidad JPA.
  */
 @ApplicationScoped
-public class CreditEvaluationRepositoryImpl
-        implements CreditEvaluationRepository, PanacheRepository<CreditEvaluationEntity> {
+public class CreditEvaluationPortImpl
+        implements CreditEvaluationPort, PanacheRepository<CreditEvaluationEntity> {
 
     @Override
     public CreditEvaluation save(CreditEvaluation evaluation) {
